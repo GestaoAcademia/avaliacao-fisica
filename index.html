@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fotos da avaliacao</title>
+  <link rel="stylesheet" href="./styles.css">
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js" defer></script>
+</head>
+<body>
+  <main class="page-shell">
+    <header class="page-header">
+      <div>
+        <h1>Fotos da avaliacao</h1>
+        <p id="studentSummary">Carregando avaliacao...</p>
+      </div>
+    </header>
+
+    <section id="configWarning" class="notice notice-warning" hidden>
+      Configure a URL e a chave anonima do Supabase em <strong>app.js</strong> antes de publicar.
+    </section>
+
+    <section id="paramWarning" class="notice notice-error" hidden>
+      Link invalido. Abra esta pagina pelo QR Code gerado na avaliacao.
+    </section>
+
+    <section id="globalMessage" class="notice" hidden></section>
+
+    <section class="photo-list" aria-label="Envio de fotos da avaliacao fisica">
+      <article class="photo-card" data-type="frente">
+        <div class="photo-info">
+          <div>
+            <h2>Frente</h2>
+            <span class="status pending">Pendente</span>
+          </div>
+          <img class="preview" alt="Preview da foto de frente" hidden>
+        </div>
+        <div class="photo-actions">
+          <label class="camera-button">
+            <i data-lucide="camera" aria-hidden="true"></i>
+            <span>Tirar foto</span>
+            <input type="file" accept="image/*" capture="environment">
+          </label>
+          <button class="secondary-button" type="button" hidden>Reenviar</button>
+        </div>
+      </article>
+
+      <article class="photo-card" data-type="costas">
+        <div class="photo-info">
+          <div>
+            <h2>Costas</h2>
+            <span class="status pending">Pendente</span>
+          </div>
+          <img class="preview" alt="Preview da foto de costas" hidden>
+        </div>
+        <div class="photo-actions">
+          <label class="camera-button">
+            <i data-lucide="camera" aria-hidden="true"></i>
+            <span>Tirar foto</span>
+            <input type="file" accept="image/*" capture="environment">
+          </label>
+          <button class="secondary-button" type="button" hidden>Reenviar</button>
+        </div>
+      </article>
+
+      <article class="photo-card" data-type="lado_direito">
+        <div class="photo-info">
+          <div>
+            <h2>Lado Direito</h2>
+            <span class="status pending">Pendente</span>
+          </div>
+          <img class="preview" alt="Preview da foto do lado direito" hidden>
+        </div>
+        <div class="photo-actions">
+          <label class="camera-button">
+            <i data-lucide="camera" aria-hidden="true"></i>
+            <span>Tirar foto</span>
+            <input type="file" accept="image/*" capture="environment">
+          </label>
+          <button class="secondary-button" type="button" hidden>Reenviar</button>
+        </div>
+      </article>
+
+      <article class="photo-card" data-type="lado_esquerdo">
+        <div class="photo-info">
+          <div>
+            <h2>Lado Esquerdo</h2>
+            <span class="status pending">Pendente</span>
+          </div>
+          <img class="preview" alt="Preview da foto do lado esquerdo" hidden>
+        </div>
+        <div class="photo-actions">
+          <label class="camera-button">
+            <i data-lucide="camera" aria-hidden="true"></i>
+            <span>Tirar foto</span>
+            <input type="file" accept="image/*" capture="environment">
+          </label>
+          <button class="secondary-button" type="button" hidden>Reenviar</button>
+        </div>
+      </article>
+    </section>
+
+    <section id="doneMessage" class="done-message" hidden>
+      Todas as fotos foram enviadas com sucesso.
+    </section>
+  </main>
+
+  <dialog id="confirmDialog" class="confirm-dialog">
+    <form method="dialog">
+      <h2 id="confirmTitle">Confirmar foto</h2>
+      <img id="confirmPreview" alt="Preview da foto selecionada">
+      <div class="dialog-actions">
+        <button id="cancelUpload" class="secondary-button" value="cancel" type="submit">Cancelar</button>
+        <button id="confirmUpload" class="camera-button" value="confirm" type="button">
+          <span>Enviar foto</span>
+        </button>
+      </div>
+    </form>
+  </dialog>
+
+  <script src="./app.js"></script>
+</body>
+</html>
