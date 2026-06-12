@@ -35,12 +35,11 @@ const elements = {
 
 const isConfigured = !SUPABASE_URL.includes('SEU-PROJETO') && !SUPABASE_ANON_KEY.includes('SUA_CHAVE');
 
-document.addEventListener('DOMContentLoaded', init);
+init();
+window.addEventListener('load', renderIcons);
 
 function init() {
-  if (window.lucide) {
-    window.lucide.createIcons();
-  }
+  renderIcons();
 
   renderHeader();
   bindPhotoInputs();
@@ -56,10 +55,16 @@ function init() {
   loadExistingPhotos();
 }
 
+function renderIcons() {
+  if (window.lucide) {
+    window.lucide.createIcons();
+  }
+}
+
 function renderHeader() {
   const alunoLabel = alunoNome ? `<strong>${escapeHtml(alunoNome)}</strong>` : `<strong>Aluno ${escapeHtml(alunoId || '-')}</strong>`;
   const avaliacaoLabel = escapeHtml(avaliacaoId || '-');
-  elements.studentSummary.innerHTML = `${alunoLabel} · Avaliacao ${avaliacaoLabel}`;
+  elements.studentSummary.innerHTML = `${alunoLabel} - Avaliacao ${avaliacaoLabel}`;
 }
 
 function bindPhotoInputs() {
@@ -82,13 +87,15 @@ function bindConfirmDialog() {
     if (!state.pending) return;
     await uploadSelectedPhoto(state.pending.type, state.pending.file);
     resetPendingInput();
-    elements.confirmDialog.close();
+    closeConfirmDialog();
   });
 
-  elements.cancelUpload.addEventListener('click', resetPendingInput);
+  elements.cancelUpload.addEventListener('click', () => {
+    resetPendingInput();
+    closeConfirmDialog();
+  });
   elements.confirmDialog.addEventListener('close', () => {
-    URL.revokeObjectURL(elements.confirmPreview.src);
-    elements.confirmPreview.removeAttribute('src');
+    clearConfirmPreview();
   });
 }
 
@@ -107,7 +114,7 @@ function openConfirmDialog(type, file, input) {
 
   elements.confirmTitle.textContent = `Confirmar foto - ${PHOTO_TYPES[type]}`;
   elements.confirmPreview.src = URL.createObjectURL(file);
-  elements.confirmDialog.showModal();
+  openDialog(elements.confirmDialog);
 }
 
 async function loadExistingPhotos() {
@@ -294,11 +301,40 @@ function resetPendingInput() {
   state.pending = null;
 }
 
+function openDialog(dialog) {
+  if (typeof dialog.showModal === 'function') {
+    dialog.showModal();
+    return;
+  }
+
+  dialog.setAttribute('open', '');
+  dialog.classList.add('is-fallback-open');
+}
+
+function closeConfirmDialog() {
+  if (typeof elements.confirmDialog.close === 'function' && elements.confirmDialog.open) {
+    elements.confirmDialog.close();
+    return;
+  }
+
+  elements.confirmDialog.removeAttribute('open');
+  elements.confirmDialog.classList.remove('is-fallback-open');
+  clearConfirmPreview();
+}
+
+function clearConfirmPreview() {
+  if (elements.confirmPreview.src) {
+    URL.revokeObjectURL(elements.confirmPreview.src);
+  }
+
+  elements.confirmPreview.removeAttribute('src');
+}
+
 function escapeHtml(value) {
   return String(value)
-    .replaceAll('&', '&amp;')
-    .replaceAll('<', '&lt;')
-    .replaceAll('>', '&gt;')
-    .replaceAll('"', '&quot;')
-    .replaceAll("'", '&#039;');
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
 }

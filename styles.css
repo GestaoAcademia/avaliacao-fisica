@@ -249,6 +249,21 @@ input {
   background: rgba(2, 8, 23, 0.55);
 }
 
+.confirm-dialog.is-fallback-open {
+  position: fixed;
+  inset: 50% auto auto 50%;
+  z-index: 10;
+  transform: translate(-50%, -50%);
+}
+
+.confirm-dialog.is-fallback-open::before {
+  content: "";
+  position: fixed;
+  inset: -100vh -100vw;
+  z-index: -1;
+  background: rgba(2, 8, 23, 0.55);
+}
+
 .confirm-dialog form {
   display: grid;
   gap: 16px;
