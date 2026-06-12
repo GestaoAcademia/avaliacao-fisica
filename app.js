@@ -158,7 +158,7 @@ async function uploadSelectedPhoto(type, file) {
     await parseJsonResponse(uploadResponse);
 
     const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/${BUCKET_NAME}/${filePath}`;
-	const savedPhoto = await savePhotoRecord(type, publicUrl, filePath);
+    const savedPhoto = await savePhotoRecord(type, publicUrl, filePath);
 
     state.photos.set(type, savedPhoto);
     markAsSent(type, publicUrl);
@@ -177,25 +177,20 @@ async function uploadSelectedPhoto(type, file) {
   }
 }
 
-async function savePhotoRecord(type, url, filePath)
-  const existing = state.photos.get(type);
- const payload = {
-  avaliacao_id: Number(avaliacaoId),
-  aluno_id: Number(alunoId),
-  tipo_foto: type,
-  nome_arquivo: filePath,
-  url
-};
+async function savePhotoRecord(type, url, filePath) {
+  const payload = {
+    avaliacao_id: Number(avaliacaoId),
+    aluno_id: Number(alunoId),
+    tipo_foto: type,
+    nome_arquivo: filePath,
+    url
+  };
 
-  const endpoint = existing
-    ? `/rest/v1/${TABLE_NAME}?id=eq.${existing.id}`
-    : `/rest/v1/${TABLE_NAME}`;
-
-  const response = await supabaseFetch(endpoint, {
-    method: existing ? 'PATCH' : 'POST',
+  const response = await supabaseFetch(`/rest/v1/${TABLE_NAME}?on_conflict=avaliacao_id,tipo_foto`, {
+    method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Prefer: 'return=representation'
+      Prefer: 'resolution=merge-duplicates,return=representation'
     },
     body: JSON.stringify(payload)
   });
@@ -261,10 +256,20 @@ async function supabaseFetch(path, options = {}) {
 
 async function parseJsonResponse(response) {
   const text = await response.text();
-  const data = text ? JSON.parse(text) : null;
+  let data = null;
+
+  if (text) {
+    try {
+      data = JSON.parse(text);
+    } catch (error) {
+      data = text;
+    }
+  }
 
   if (!response.ok) {
-    const message = data && (data.message || data.error || data.msg);
+    const message = data && typeof data === 'object'
+      ? (data.message || data.error || data.msg)
+      : data;
     throw new Error(message || `Erro ${response.status} ao comunicar com o Supabase.`);
   }
 
