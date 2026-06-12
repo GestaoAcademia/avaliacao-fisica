@@ -1,5 +1,5 @@
 const SUPABASE_URL = 'https://femyevsxvvdeldfsxwqy.supabase.co';
-const SUPABASE_ANON_KEY = 'COLE_AQUI_A_CHAVE_ANON_PUBLICA_JWT';
+const SUPABASE_ANON_KEY = 'sb_publishable_ZAfh1wYyqVa-T_SWJyl6w_xfopoxv';
 const BUCKET_NAME = 'fotos-avaliacao';
 const TABLE_NAME = 'avaliacao_fotos';
 
@@ -33,7 +33,7 @@ const elements = {
   cancelUpload: document.querySelector('#cancelUpload')
 };
 
-const isConfigured = !SUPABASE_URL.includes('SEU-PROJETO') && isValidJwtKey(SUPABASE_ANON_KEY);
+const isConfigured = !SUPABASE_URL.includes('SEU-PROJETO') && isValidSupabaseKey(SUPABASE_ANON_KEY);
 
 init();
 window.addEventListener('load', renderIcons);
@@ -66,7 +66,7 @@ function renderConfigWarning() {
   elements.configWarning.hidden = isConfigured;
 
   if (!isConfigured) {
-    elements.configWarning.innerHTML = 'Configure em <strong>app.js</strong> a chave <strong>anon public</strong> do Supabase em formato JWT. Ela comeca com <strong>eyJ...</strong>. Nao use chave <strong>sb_publishable_...</strong>, <strong>service_role</strong> ou <strong>secret</strong> neste site.';
+    elements.configWarning.innerHTML = 'Configure em <strong>app.js</strong> a chave publica do Supabase. Use uma chave <strong>sb_publishable_...</strong> ou a chave legada <strong>anon</strong> que comeca com <strong>eyJ...</strong>. Nao use <strong>service_role</strong> ou <strong>sb_secret_...</strong> neste site.';
   }
 }
 
@@ -168,7 +168,7 @@ async function uploadSelectedPhoto(type, file) {
 
   try {
     if (!isConfigured) {
-      throw new Error('Configure a chave anon public JWT do Supabase antes de enviar fotos.');
+      throw new Error('Configure a chave publica do Supabase antes de enviar fotos.');
     }
 
     setCardStatus(card, 'Enviando...', 'sending');
@@ -274,9 +274,12 @@ function getFileExtension(file) {
 async function supabaseFetch(path, options = {}) {
   const headers = {
     apikey: SUPABASE_ANON_KEY,
-    Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
     ...(options.headers || {})
   };
+
+  if (isValidJwtKey(SUPABASE_ANON_KEY) && !headers.Authorization) {
+    headers.Authorization = `Bearer ${SUPABASE_ANON_KEY}`;
+  }
 
   return fetch(`${SUPABASE_URL}${path}`, {
     ...options,
@@ -351,6 +354,14 @@ function clearConfirmPreview() {
   }
 
   elements.confirmPreview.removeAttribute('src');
+}
+
+function isValidSupabaseKey(key) {
+  return isPublishableKey(key) || isValidJwtKey(key);
+}
+
+function isPublishableKey(key) {
+  return /^sb_publishable_[\w-]+$/.test(key);
 }
 
 function isValidJwtKey(key) {
