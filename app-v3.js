@@ -1,5 +1,5 @@
 const SUPABASE_URL = 'https://femyevsxvvdeldfsxwqy.supabase.co';
-const SUPABASE_ANON_KEY = 'COLE_AQUI_A_CHAVE_ANON_JWT';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZlbXlldnN4dnZkZWxkZnN4d3F5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEyNjA3ODYsImV4cCI6MjA5NjgzNjc4Nn0.x5aLnAG77F-Elg2FBgn28bSQASb3nfutmYLwVWjyYsc';
 const BUCKET_NAME = 'fotos-avaliacao';
 const TABLE_NAME = 'avaliacao_fotos';
 
