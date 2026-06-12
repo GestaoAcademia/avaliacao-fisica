@@ -65,9 +65,12 @@ function renderIcons() {
 function renderConfigWarning() {
   elements.configWarning.hidden = isConfigured;
 
-  if (!isConfigured) {
-    elements.configWarning.innerHTML = 'Configure em <strong>app.js</strong> a chave publica do Supabase. Use uma chave <strong>sb_publishable_...</strong> ou a chave legada <strong>anon</strong> que comeca com <strong>eyJ...</strong>. Nao use <strong>service_role</strong> ou <strong>sb_secret_...</strong> neste site.';
+  if (isConfigured) {
+    elements.configWarning.textContent = '';
+    return;
   }
+
+  elements.configWarning.innerHTML = 'Configure em <strong>app.js</strong> a chave publica do Supabase. Use uma chave <strong>sb_publishable_...</strong> ou a chave legada <strong>anon</strong> que comeca com <strong>eyJ...</strong>. Nao use <strong>service_role</strong> ou <strong>sb_secret_...</strong> neste site.';
 }
 
 function renderHeader() {
