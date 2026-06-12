@@ -300,13 +300,23 @@ async function parseJsonResponse(response) {
   }
 
   if (!response.ok) {
-    const message = data && typeof data === 'object'
-      ? (data.message || data.error || data.msg)
-      : data;
+    const message = getFriendlySupabaseError(data);
     throw new Error(message || `Erro ${response.status} ao comunicar com o Supabase.`);
   }
 
   return data;
+}
+
+function getFriendlySupabaseError(data) {
+  const message = data && typeof data === 'object'
+    ? (data.message || data.error || data.msg)
+    : data;
+
+  if (String(message).toLowerCase().includes('bucket not found')) {
+    return `Bucket do Supabase nao encontrado. Crie no Storage um bucket chamado "${BUCKET_NAME}" ou altere BUCKET_NAME no app-v4.js para o nome do bucket existente.`;
+  }
+
+  return message;
 }
 
 function showMessage(message, type) {
