@@ -1,5 +1,5 @@
-const SUPABASE_URL = 'https://SEU-PROJETO.supabase.co';
-const SUPABASE_ANON_KEY = 'SUA_CHAVE_ANON_PUBLICA';
+const SUPABASE_URL = 'https://femyevsxvvdeldfsxwqy.supabase.co';
+const SUPABASE_ANON_KEY = 'sb_publishable_ZAfh1wYyqVa-T_SWJyl6w_xfopoxv';
 const BUCKET_NAME = 'fotos-avaliacao';
 const TABLE_NAME = 'avaliacao_fotos';
 
@@ -158,7 +158,7 @@ async function uploadSelectedPhoto(type, file) {
     await parseJsonResponse(uploadResponse);
 
     const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/${BUCKET_NAME}/${filePath}`;
-    const savedPhoto = await savePhotoRecord(type, publicUrl);
+	const savedPhoto = await savePhotoRecord(type, publicUrl, filePath);
 
     state.photos.set(type, savedPhoto);
     markAsSent(type, publicUrl);
@@ -177,14 +177,15 @@ async function uploadSelectedPhoto(type, file) {
   }
 }
 
-async function savePhotoRecord(type, url) {
+async function savePhotoRecord(type, url, filePath)
   const existing = state.photos.get(type);
-  const payload = {
-    avaliacao_id: Number(avaliacaoId),
-    aluno_id: Number(alunoId),
-    tipo_foto: type,
-    url
-  };
+ const payload = {
+  avaliacao_id: Number(avaliacaoId),
+  aluno_id: Number(alunoId),
+  tipo_foto: type,
+  nome_arquivo: filePath,
+  url
+};
 
   const endpoint = existing
     ? `/rest/v1/${TABLE_NAME}?id=eq.${existing.id}`
