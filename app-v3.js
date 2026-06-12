@@ -70,7 +70,7 @@ function renderConfigWarning() {
     return;
   }
 
-  elements.configWarning.innerHTML = 'Configure em <strong>app.js</strong> a chave <strong>anon public</strong> legada do Supabase em formato JWT. Ela comeca com <strong>eyJ...</strong>. Nao use <strong>sb_publishable_...</strong>, <strong>service_role</strong> ou <strong>sb_secret_...</strong> neste site.';
+  elements.configWarning.innerHTML = 'Configure em <strong>app-v3.js</strong> a chave <strong>anon public</strong> legada do Supabase em formato JWT. Ela comeca com <strong>eyJ...</strong>. Nao use <strong>sb_publishable_...</strong>, <strong>service_role</strong> ou <strong>sb_secret_...</strong> neste site.';
 }
 
 function renderHeader() {
