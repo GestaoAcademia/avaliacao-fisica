@@ -1,5 +1,5 @@
 const SUPABASE_URL = 'https://femyevsxvvdeldfsxwqy.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_ZAfh1wYyqVa-T_SWJyl6w_xfopoxv';
+const SUPABASE_ANON_KEY = 'COLE_AQUI_A_CHAVE_ANON_PUBLICA_JWT';
 const BUCKET_NAME = 'fotos-avaliacao';
 const TABLE_NAME = 'avaliacao_fotos';
 
@@ -33,7 +33,7 @@ const elements = {
   cancelUpload: document.querySelector('#cancelUpload')
 };
 
-const isConfigured = !SUPABASE_URL.includes('SEU-PROJETO') && !SUPABASE_ANON_KEY.includes('SUA_CHAVE');
+const isConfigured = !SUPABASE_URL.includes('SEU-PROJETO') && isValidJwtKey(SUPABASE_ANON_KEY);
 
 init();
 window.addEventListener('load', renderIcons);
@@ -45,8 +45,9 @@ function init() {
   bindPhotoInputs();
   bindConfirmDialog();
 
-  elements.configWarning.hidden = isConfigured;
+  renderConfigWarning();
   elements.paramWarning.hidden = Boolean(avaliacaoId && alunoId);
+  setPhotoInputsEnabled(Boolean(avaliacaoId && alunoId && isConfigured));
 
   if (!avaliacaoId || !alunoId || !isConfigured) {
     return;
@@ -58,6 +59,14 @@ function init() {
 function renderIcons() {
   if (window.lucide) {
     window.lucide.createIcons();
+  }
+}
+
+function renderConfigWarning() {
+  elements.configWarning.hidden = isConfigured;
+
+  if (!isConfigured) {
+    elements.configWarning.innerHTML = 'Configure em <strong>app.js</strong> a chave <strong>anon public</strong> do Supabase em formato JWT. Ela comeca com <strong>eyJ...</strong>. Nao use chave <strong>sb_publishable_...</strong>, <strong>service_role</strong> ou <strong>secret</strong> neste site.';
   }
 }
 
@@ -79,6 +88,16 @@ function bindPhotoInputs() {
     });
 
     resendButton.addEventListener('click', () => input.click());
+  });
+}
+
+function setPhotoInputsEnabled(enabled) {
+  document.querySelectorAll('.photo-card').forEach((card) => {
+    const input = card.querySelector('input[type="file"]');
+    const resendButton = card.querySelector('.secondary-button');
+
+    input.disabled = !enabled;
+    resendButton.disabled = !enabled;
   });
 }
 
@@ -148,6 +167,10 @@ async function uploadSelectedPhoto(type, file) {
   const card = getCard(type);
 
   try {
+    if (!isConfigured) {
+      throw new Error('Configure a chave anon public JWT do Supabase antes de enviar fotos.');
+    }
+
     setCardStatus(card, 'Enviando...', 'sending');
     elements.confirmUpload.disabled = true;
     showMessage('', 'info');
@@ -328,6 +351,10 @@ function clearConfirmPreview() {
   }
 
   elements.confirmPreview.removeAttribute('src');
+}
+
+function isValidJwtKey(key) {
+  return /^eyJ[\w-]+\.[\w-]+\.[\w-]+$/.test(key);
 }
 
 function escapeHtml(value) {
