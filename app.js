@@ -316,6 +316,10 @@ function getFriendlySupabaseError(data) {
     return `Bucket do Supabase nao encontrado. Crie no Storage um bucket chamado "${BUCKET_NAME}" ou altere BUCKET_NAME no app.js para o nome do bucket existente.`;
   }
 
+  if (String(message).toLowerCase().includes('row-level security')) {
+    return 'O Supabase bloqueou por RLS. Rode o arquivo supabase-setup.sql no SQL Editor do Supabase para liberar upload e gravacao das fotos.';
+  }
+
   return message;
 }
 
